@@ -2,8 +2,16 @@ const router = require('koa-router')()
 const db = require('../db');
 router.prefix('/users')
 
-router.get('/bar', async (ctx, next)=>{
-  ctx.body = 'this is a users/bar response'
+
+router.get('/', async (ctx, next)=>{
+	ctx.body="23233232323232"
+	
+})
+
+router.get('/ceshi', async (ctx, next)=>{
+ let name=ctx.request.query.username;
+ ctx.body=name;
+ console.log(name)
 })
 
 //登录
@@ -17,7 +25,6 @@ router.post('/login', async (ctx, next)=>{
 			 }else{
 				ctx.body={sate:201,data:res};
 			 }
-	
 	 })
 })
 
@@ -26,18 +33,13 @@ router.post('/regist', async (ctx, next)=>{
 		let phone= ctx.request.body.phone;
 		let pass= ctx.request.body.password;
 	  let sql="insert into user value(null,?,?,null)";
-		 await db.query(sql,[phone,pass]).then(res => {
-				 if (res && res.length > 0) {
-					ctx.body={sate:200,data:''};
-				 }else{
-					ctx.body={sate:201,data:''};
-				 }
-					
-		 })
-		
+	 await db.query(sql,[phone,pass]).then(res =>{
+			 if (res && res.length > 0) {
+				ctx.body={sate:200,data:''};
+			 }else{
+				ctx.body={sate:201,data:''};
+			 }
+	 })
 })
-
-
-
 
 module.exports = router
