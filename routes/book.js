@@ -51,10 +51,10 @@ router.post('/content', async (ctx, next) => {
 	 })
 })
 //书目录
-router.post('/menu', async (ctx, next) => {
+router.post('/title', async (ctx, next) => {
 	let id=ctx.request.body.id;
 	let sql=`select * from book${id}`;
-	 await db.query(sql,[id]).then(res =>{
+	 await db.query(sql).then(res =>{
 			 if (res && res.length > 0) {
 				ctx.body={state:200,data:res};
 			 }else{
