@@ -5,7 +5,7 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
-
+const jwt = require('jsonwebtoken');
 const index = require('./routes/index')
 const users = require('./routes/users')
 const book = require('./routes/book')
@@ -25,9 +25,28 @@ app.use(views(__dirname + '/views', {
   extension: 'pug'
 }))
 
+
 // logger
 app.use(async (ctx, next) => {
   const start = new Date()
+		if(ctx.request.header.tokenid){
+				let decoded = jwt.decode(ctx.request.header.tokenid,'dxy');
+				if(decoded.exp <= new Date()/1000){
+						ctx.status = 401;
+						ctx.body = {
+              message: '没有token'
+            }
+				}else{
+					next();
+				}
+				
+		}else{
+			 ctx.status = 401;
+			 ctx.body = {
+            message: '没有token'
+        }
+		}
+	
   await next()
   const ms = new Date() - start
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)

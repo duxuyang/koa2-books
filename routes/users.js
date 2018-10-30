@@ -1,18 +1,13 @@
 const router = require('koa-router')()
 const db = require('../db');
+const jwt = require('jsonwebtoken');
 router.prefix('/users')
 
 
 router.get('/', async (ctx, next)=>{
-	ctx.body="23233232323232"
-	
+	ctx.body="23233232323232";
 })
 
-router.get('/ceshi', async (ctx, next)=>{
- let name=ctx.request.query.username;
- ctx.body=name;
- console.log(name)
-})
 
 //登录
 router.post('/login', async (ctx, next)=>{
@@ -21,7 +16,12 @@ router.post('/login', async (ctx, next)=>{
 	let sql="select * from user where uname=? and upass=?"
 	 await db.query(sql,[uname,upass]).then(res => {
 		   if (res && res.length > 0) {
-				ctx.body={sate:200,id:res[0].id};
+				   const token = jwt.sign({
+								user_id: res[0].id
+						}, 'dxy', {
+								expiresIn: '200s'
+						})
+				ctx.body={sate:200,id:res[0].id,tokenId:token};
 			 }else{
 				ctx.body={sate:201,data:res};
 			 }
