@@ -29,25 +29,26 @@ app.use(views(__dirname + '/views', {
 // logger
 app.use(async (ctx, next) => {
   const start = new Date()
-		if(ctx.request.header.tokenid){
-				let decoded = jwt.decode(ctx.request.header.tokenid,'dxy');
-				if(decoded.exp <= new Date()/1000){
-						ctx.status = 401;
-						ctx.body = {
-              message: '没有token'
-            }
-				}else{
-					next();
-				}
-				
+		if(ctx.request.url!="/users/login"){
+			if(ctx.request.header.tokenid!="TOKENID"){
+					let decoded = jwt.decode(ctx.request.header.tokenid,'dxy');
+					if(decoded.exp <= new Date()/1000){
+							ctx.status = 401;
+							ctx.body = {
+								message: '没有token'
+							}
+					}else{
+					  await	next();
+					}
+			}else{
+				 ctx.status = 401;
+				 ctx.body = {
+							message: '没有token'
+					}
+			}				
 		}else{
-			 ctx.status = 401;
-			 ctx.body = {
-            message: '没有token'
-        }
+		 await	next();
 		}
-	
-  await next()
   const ms = new Date() - start
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
